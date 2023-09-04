@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Tomaj\NetteApi\Handlers;
 
 use InvalidArgumentException;
+use LogicException;
 use Nette\Application\UI\InvalidLinkException;
 use Nette\Http\IResponse;
 use Nette\Http\Request;
+use stdClass;
 use Symfony\Component\Yaml\Yaml;
 use Tomaj\NetteApi\Api;
 use Tomaj\NetteApi\ApiDecider;
@@ -19,7 +21,7 @@ use Tomaj\NetteApi\Authorization\NoAuthorization;
 use Tomaj\NetteApi\Authorization\QueryApiKeyAuthentication;
 use Tomaj\NetteApi\Link\ApiLink;
 use Tomaj\NetteApi\Misc\OpenApiTransform;
-use Tomaj\NetteApi\Output\JsonOutput;
+use Tomaj\NetteApi\Output\AbstractOutput;
 use Tomaj\NetteApi\Output\RedirectOutput;
 use Tomaj\NetteApi\Params\GetInputParam;
 use Tomaj\NetteApi\Params\InputParam;
@@ -249,17 +251,10 @@ class OpenApiHandler extends BaseHandler
             $path = str_replace([$baseUrl, $basePath], '', $this->apiLink->link($api->getEndpoint()));
             $responses = [];
             foreach ($handler->outputs() as $output) {
-                if ($output instanceof JsonOutput) {
-                    $schema = $this->transformSchema(json_decode($output->getSchema(), true));
-                    $responses[$output->getCode()] = [
-                        'description' => $output->getDescription(),
-                        'content' => [
-                            'application/json; charset=utf-8' => [
-                                'schema' => $schema,
-                            ],
-                        ]
-                    ];
+                if (!$output instanceof AbstractOutput) {
+                    continue;
                 }
+                $schema = $this->transformSchema(json_decode($output->getSchema(), true));
 
                 if ($output instanceof RedirectOutput) {
                     $responses[$output->getCode()] = [
@@ -267,11 +262,28 @@ class OpenApiHandler extends BaseHandler
                         'headers' => [
                             'Location' => [
                                 'description' => $output->getDescription(),
-                                'schema' => [
-                                    'type' => 'string',
-                                ]
+                                'schema' => $schema,
                             ],
-                        ]
+                        ],
+                    ];
+                    continue;
+                }
+
+                if (isset($responses[$output->getCode()])) {
+                    if (isset($responses[$output->getCode()]['content'][$output->getContentType()])) {
+                        throw new LogicException('Duplicate content-type "' . $output->getContentType() . '" in "' . $output->getCode() . '" response');
+                    }
+                    $responses[$output->getCode()]['content'][$output->getContentType()] = [
+                        'schema' => $schema,
+                    ];
+                } else {
+                    $responses[$output->getCode()] = [
+                        'description' => $output->getDescription(),
+                        'content' => [
+                            $output->getContentType() => [
+                                'schema' => $schema,
+                            ],
+                        ],
                     ];
                 }
             }
@@ -297,7 +309,7 @@ class OpenApiHandler extends BaseHandler
                             'schema' => [
                                 '$ref' => '#/components/schemas/ErrorWrongInput',
                             ],
-                        ]
+                        ],
                     ],
                 ];
             }
@@ -594,7 +606,8 @@ class OpenApiHandler extends BaseHandler
             }
             unset($schema['definitions']);
         }
-        return json_decode(str_replace('#/definitions/', '#/components/schemas/', json_encode($schema, JSON_UNESCAPED_SLASHES)), true);
+        $decodedSchema = json_decode(str_replace('#/definitions/', '#/components/schemas/', json_encode($schema, JSON_UNESCAPED_SLASHES)), true);
+        return $decodedSchema === [] ? new stdClass() : $decodedSchema; // schema should be object
     }
 
     private function addDefinition($name, $definition)

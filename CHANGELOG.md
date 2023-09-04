@@ -7,6 +7,7 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
 #### Added
 
 * Support for JsonSerializable payload in JsonApiResponse
+* Support for respond with various media types (https://swagger.io/docs/specification/describing-responses/#media-types)
 
 ## 2.10.1
 

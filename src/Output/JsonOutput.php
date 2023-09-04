@@ -16,7 +16,7 @@ class JsonOutput extends AbstractOutput
 
     public function __construct(int $code, string $schema, string $description = '')
     {
-        parent::__construct($code, $description);
+        parent::__construct($code, $description, 'application/json; charset=utf-8');
         $this->schema = $schema;
     }
 

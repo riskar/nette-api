@@ -10,10 +10,14 @@ abstract class AbstractOutput implements OutputInterface
 
     protected $description;
 
-    public function __construct(int $code, string $description = '')
+    /** @var string */
+    protected $contentType;
+
+    public function __construct(int $code, string $description = '', string $contentType = '')
     {
         $this->code = $code;
         $this->description = $description;
+        $this->contentType = $contentType;
     }
 
     public function getCode(): int
@@ -24,5 +28,15 @@ abstract class AbstractOutput implements OutputInterface
     public function getDescription(): string
     {
         return $this->description;
+    }
+
+    public function getContentType(): string
+    {
+        return $this->contentType;
+    }
+
+    public function getSchema(): string
+    {
+        return '{}';
     }
 }
