@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Tomaj\NetteApi\Handlers;
 
 use InvalidArgumentException;
-use LogicException;
 use Nette\Application\UI\InvalidLinkException;
 use Nette\Http\IResponse;
 use Nette\Http\Request;
@@ -270,9 +269,6 @@ class OpenApiHandler extends BaseHandler
                 }
 
                 if (isset($responses[$output->getCode()])) {
-                    if (isset($responses[$output->getCode()]['content'][$output->getContentType()])) {
-                        throw new LogicException('Duplicate content-type "' . $output->getContentType() . '" in "' . $output->getCode() . '" response');
-                    }
                     $responses[$output->getCode()]['content'][$output->getContentType()] = [
                         'schema' => $schema,
                     ];
