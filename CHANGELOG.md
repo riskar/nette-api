@@ -135,7 +135,7 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
 
 ### Added
 
-* Added API rate limit
+* Added API rate limit 
 * Added custom headers to API console
 * Added field for timeout to API console
 * OpenAPI handler
@@ -272,7 +272,7 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
 ### Added
 
 * Added default CORS preflight handler
-* Added possibility to enable global preflight handler for all handlers with `enableGlobalPreflight()` on `ApiDecider`
+* Added possibility to enable global preflight handler for all handlers with `enableGlobalPreflight()` on `ApiDecider` 
 
 ## 1.6.2 - 2016-07-22
 
@@ -324,10 +324,10 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
 ### Added
 
 * New ability to send new input types:
-    - send RAW POST data
-    - send COOKIES
-    - send FILEs
-    - (more info in readme section Inputs)
+   - send RAW POST data
+   - send COOKIES
+   - send FILEs
+   - (more info in readme section Inputs)
 * all new types are available in test console for easy testing api calls
 
 ## 1.1.0 - 2016-01-15
@@ -335,10 +335,10 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
 ### Added
 
 * Added CORS support to ApiPresenter. Available options:
-    - 'auto' - send back header Access-Control-Allow-Origin with domain that made request
-    - '*' - send header with '*' - this will work fine if you dont need to send cookies via ajax calls to api with jquery $.ajax with xhrFields: { withCredentials: true } settings
-    - 'off' - will not send any CORS header
-    - other - any other value will be send in Access-Control-Allow-Origin header
+   - 'auto' - send back header Access-Control-Allow-Origin with domain that made request
+   - '*' - send header with '*' - this will work fine if you dont need to send cookies via ajax calls to api with jquery $.ajax with xhrFields: { withCredentials: true } settings
+   - 'off' - will not send any CORS header
+   - other - any other value will be send in Access-Control-Allow-Origin header
 * Rewritten few internal functions
 
 ## 1.0.1 - 2015-01-07
